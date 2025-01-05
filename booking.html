@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Nail Design Booking Form</title>
+        <!-- Add EmailJS SDK -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+        <script type="text/javascript">
+            // Initialize EmailJS - you'll get this after step 3
+            (function() {
+                emailjs.init("BLSiBzVJ8iXNI12c7"); // You'll add your public key here after step 3
+            })();
+        </script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f9f9f9;
+            }
+            .form-container {
+                max-width: 500px;
+                margin: auto;
+                padding: 20px;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            .form-container h2 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            .form-group input, .form-group select, .form-group button {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            .form-group button {
+                background-color: #28a745;
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+            }
+            .form-group button:hover {
+                background-color: #218838;
+            }
+            .loading {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+        </style>
+        <script>
+            function updateSizeAndPrice() {
+                const design = document.getElementById('design').value;
+                const sizeSelect = document.getElementById('size');
+    
+                sizeSelect.innerHTML = '<option value="">-- Select Size/Price --</option>';
+                sizeSelect.disabled = true;
+    
+                if (design === 'Plain Gel X') {
+                    sizeSelect.innerHTML += `
+                        <option value="Small (R150)">Small (R150)</option>
+                        <option value="Medium (R160)">Medium (R160)</option>
+                        <option value="Large (R170)">Large (R170)</option>
+                        <option value="Extra-Large (R180)">Extra-Large (R180)</option>
+                    `;
+                    sizeSelect.disabled = false;
+                } else if (design === 'Gel X with Design') {
+                    sizeSelect.innerHTML += `
+                        <option value="Small (R160 - R190)">Small (R160 - R190)</option>
+                        <option value="Medium (R200 - R240)">Medium (R200 - R240)</option>
+                        <option value="Large (R250 - R300)">Large (R250 - R300)</option>
+                    `;
+                    sizeSelect.disabled = false;
+                } else if (design === 'Gel Pedicure') {
+                    sizeSelect.innerHTML += '<option value="R100 - R130">R100 - R130</option>';
+                    sizeSelect.disabled = false;
+                } else if (design === 'Buff and Shine') {
+                    sizeSelect.innerHTML += '<option value="R80">R80</option>';
+                    sizeSelect.disabled = false;
+                } else if (design === 'Soak Off') {
+                    sizeSelect.innerHTML += '<option value="R80">R80</option>';
+                    sizeSelect.disabled = false;
+                }
+            }
+    
+            function submitForm(event) {
+    event.preventDefault();
+
+    const submitButton = document.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.classList.add('loading');
+    submitButton.textContent = 'Sending...';
+
+    const templateParams = {
+        to_email: 'tumelovincent558@gmail.com',
+        from_name: document.getElementById('name').value,
+        contact_number: document.getElementById('contact').value,
+        customer_email: document.getElementById('email').value,
+        design_type: document.getElementById('design').value,
+        size_price: document.getElementById('size').value,
+    };
+
+    emailjs.send('service_f55uznd', 'template_b4oc3r2', templateParams)
+        .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+            alert('Thank you! We will get back to you with the available date and time.');
+            document.querySelector('form').reset();
+        })
+        .catch(function(error) {
+            console.log('FAILED...', error);
+            alert('Error details: ' + JSON.stringify(error));
+        })
+        .finally(function() {
+            submitButton.disabled = false;
+            submitButton.classList.remove('loading');
+            submitButton.textContent = 'Submit Booking';
+        });
+}
+        </script>
+    </head>
+    <body>
+        <div class="form-container">
+            <h2>Nail Design Booking Form</h2>
+            <form onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="contact">Contact Number:</label>
+                    <input type="text" id="contact" name="contact" required pattern="\d{10,15}" title="Please enter a valid phone number (10-15 digits).">
+                </div>
+    
+                <div class="form-group">
+                    <label for="email">Email (optional):</label>
+                    <input type="email" id="email" name="email">
+                </div>
+    
+                <div class="form-group">
+                    <label for="design">Nail Design:</label>
+                    <select id="design" name="design" onchange="updateSizeAndPrice()" required>
+                        <option value="">-- Select Design --</option>
+                        <option value="Plain Gel X">Plain Gel X</option>
+                        <option value="Gel X with Design">Gel X with Design</option>
+                        <option value="Gel Pedicure">Gel Pedicure</option>
+                        <option value="Buff and Shine">Buff and Shine</option>
+                        <option value="Soak Off">Soak Off</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="size">Size/Price:</label>
+                    <select id="size" name="size" required disabled>
+                        <option value="">-- Select Size/Price --</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <button type="submit">Submit Booking</button>
+                </div>
+            </form>
+        </div>
+    </body>
+    </html>
